@@ -2,12 +2,18 @@
 
 It helps you to inject js and css into html and to concatenate them in the correct order.
 
+## Instalation
+
+```bash
+npm install --save-dev gulp-module-packer
+```
+
 ## Usage
 
 This package will help you with 3 things:
 
-- inject code into your HTML (keeping the order)
-- concatenate your files into modules (keeping the order)
+- inject code into your HTML (keeping file order)
+- concatenate your files into modules (keeping file order)
 - list all available js/css to your project
 
 ### Inject
@@ -183,6 +189,8 @@ And for `dev: true`:
   </body>
 </html>
 ```
+
+For any HTML file not listed at `modpack.json`, `gulp-module-packer.inject()` will behave as a pass-through.
 
 ### Concatenate
 

@@ -10,15 +10,16 @@ var config;
 
 function prepare(options){
     var opt = {
-        configFile  : 'modpack.json',
-        min         : false,
-        dev         : true,
-        keepComment : true,
-        hash        : '',
-        jsStart     : '<script src="',
-        jsEnd       : '"></script>',
-        cssStart    : '<link rel="stylesheet" href="',
-        cssEnd      : '">',
+        configFile   : 'modpack.json',
+        min          : false,
+        dev          : true,
+        keepComment  : true,
+        keepConsumed : false,
+        hash         : '',
+        jsStart      : '<script src="',
+        jsEnd        : '"></script>',
+        cssStart     : '<link rel="stylesheet" href="',
+        cssEnd       : '">',
     };
 
     for(var attr in options){
@@ -41,7 +42,9 @@ function defineInject(dst, target, opt){
                 var name = dst[target][i];
                 inject.push('<!-- ' + name + ' -->');
                 for(var j = 0; j < config[target][name].length; j++){
-                    inject.push(opt[target+'Start'] + config[target][name][j] + opt[target+'End']);
+                    if(config[target][name][j][0] != ':' || config[target][name][j][1] != ':'){
+                        inject.push(opt[target+'Start'] + config[target][name][j] + opt[target+'End']);
+                    }
                 }
             }
             else{
@@ -69,9 +72,9 @@ function replaceBlock(text, block, data, opt){
         var new_text = m[1];
 
         var indent = '\n';
-        
-        var i = new_text.length;
-        while(new_text[--i] == ' '){ indent += ' '; }
+
+        var l = new_text.length;
+        while(new_text[--l] == ' '){ indent += ' '; }
 
         if(opt.keepComment) new_text += m[2];
         for(var i = 0; i < data.length; i++){
@@ -121,36 +124,58 @@ var concat = function(options){
         throw new PluginError('gulp-module-packer', 'Invalid target.');
     }
 
-    var pass = through.obj(function(file, enc, cb){ cb(null, file); },  function(cb){
-        console.log('estou executando....');
+    var waitFor = {};
+
+    for(var name in config[opt.target]){
+        for(var i = 0; i < config[opt.target][name].length; i++) {
+            if(config[opt.target][name][i][0] == ':' && config[opt.target][name][i][1] == ':'){
+                waitFor[config[opt.target][name][i]] = null;
+            }
+        }
+    }
+
+    var pass = through.obj(function(file, enc, cb){
+
+        var name = '::' + file.relative;
+
+        if(name in waitFor){
+            waitFor[name] = file.contents;
+            if(!opt.keepConsumed){
+                return cb();
+            }
+        }
+
+        cb(null, file);
+    }, function(cb){
+        for(var name in config[opt.target]){
+
+            var content = '';
+
+            for(var i = 0; i < config[opt.target][name].length; i++) {
+
+                var file = config[opt.target][name][i];
+                if(file[0] == ':' && file[1] == ':'){
+                    content += waitFor[file] + '\n';
+                }
+                else{
+                    content += fs.readFileSync(file) + "\n";
+                }
+            }
+
+            var new_file = new gutil.File({
+                cwd      : "",
+                base     : "",
+                path     : name + '.' + opt.target,
+                contents : new Buffer(content)
+            });
+
+            pass.write(new_file);
+        }
         cb();
     });
 
-    for(var name in config[opt.target]){
-
-        var content = '';
-
-        for(var i = 0; i < config[opt.target][name].length; i++) {
-            console.log(config[opt.target][name][i]);
-            content += fs.readFileSync(config[opt.target][name][i]) + "\n";
-        };
-
-        var new_file = new gutil.File({
-            cwd      : "",
-            base     : "",
-            path     : name + '.' + opt.target,
-            contents : new Buffer(content)
-        });
-
-        pass.write(new_file);
-    }
-
-    // var pass = through.obj();
-
-	// return es.duplex(pass, es.merge(vinyl.src.apply(vinyl.src, arguments), pass));
-
     return pass;
-}
+};
 
 module.exports.inject = inject;
 module.exports.concat = concat;
