@@ -91,7 +91,7 @@ function replaceBlock(text, block, data, opt){
 
 var inject = function(options){
 
-    var opt = prepare(options);
+    var opt = prepare(options || {});
 
     return through.obj(function(file, enc, cb){
         if(file.isStream()){
@@ -115,7 +115,7 @@ var inject = function(options){
 
 var concat = function(options){
 
-    var opt = prepare(options);
+    var opt = prepare(options || {});
 
     if(typeof opt.target != 'string'){
         throw new PluginError('gulp-module-packer', 'Missing target in configuration.');
@@ -179,7 +179,7 @@ var concat = function(options){
 
 var list = function(options){
 
-    var opt = prepare(options);
+    var opt = prepare(options || {});
 
     config.available = [];
 
@@ -203,9 +203,7 @@ var list = function(options){
         cb(null, file);
     }, function(cb){
 
-        console.log(config);
-
-        fs.writeFileSync('meleca.json', JSON.stringify(config, null, 4));
+        fs.writeFileSync(opt.configFile, JSON.stringify(config, null, 4));
 
         cb();
     });
