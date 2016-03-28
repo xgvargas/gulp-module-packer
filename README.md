@@ -89,7 +89,7 @@ Your HTML files should include 2 placeholders:
 </html>
 ```
 
-Finally a simples `gulpfile`:
+Finally a simple `gulpfile`:
 
 ```javascript
 var packer = require('gulp-module-packer');
@@ -163,6 +163,7 @@ And for `dev: true`:
     <title>My App</title>
     <link rel="shortcut icon" href="favicon.ico">
     <!-- gmp:inject:css -->
+    <!-- app-css -->
     <link rel="stylesheet" href="bootstrap.css">
     <link rel="stylesheet" href="app.css">
     <!-- gmp:end -->
@@ -171,9 +172,11 @@ And for `dev: true`:
     <div id="main-div" ui-view></div>
     <script src="//any/external/stuff.js"></script>
     <!-- gmp:inject:js -->
+    <!-- base -->
     <script src="angular.js"></script>
     <script src="angular-animate.js"></script>
     <script src="angular-ui-router.js"></script>
+    <!-- app -->
     <script src="app.js"></script>
     <script src="routes.js"></script>
     <!-- gmp:end -->
@@ -201,16 +204,16 @@ Please note that if you set `options.min` true in here all it does is to include
 
 `gulp-module-packer.inject(option)`
 
-| option        | defaut                              | description                                                 |
-|:--------------|:------------------------------------|:------------------------------------------------------------|
-| `configFile`  | `modpack.json`                      | name of configuration file                                  |
-| `min`         | `false`                             | if true then include '.min' to injected file                |
-| `dev`         | `true`                              | if true inject developping file instead of concatened files |
-| `keepComment` | `true`                              | keep the placeholder comment wraping the injection          |
-| `hash`        | `''`                                | added between filename and [.min].(js/css)                  |
-| `jsStart`     | `'\n<script src="'`                 |                                                             |
-| `jsEnd`       | `'"></script>'`                     |                                                             |
-| `cssStart`    | `'\n<link rel="stylesheet" href="'` |                                                             |
-| `cssEnd`      | `'">'`                              |                                                             |
+| option        | defaut                            | description                                                  |
+|:--------------|:----------------------------------|:-------------------------------------------------------------|
+| `configFile`  | `modpack.json`                    | name of configuration file                                   |
+| `min`         | `false`                           | if true then include '.min' to injected file                 |
+| `dev`         | `true`                            | if true inject developping files instead of concatened files |
+| `keepComment` | `true`                            | keep the placeholder comment wraping the injection           |
+| `hash`        | `''`                              | added between filename and [.min].(js/css)                   |
+| `jsStart`     | `'<script src="'`                 |                                                              |
+| `jsEnd`       | `'"></script>'`                   |                                                              |
+| `cssStart`    | `'<link rel="stylesheet" href="'` |                                                              |
+| `cssEnd`      | `'">'`                            |                                                              |
 
 Please note that this function does not handle files, all it does is to inject elements inside your HTML code. So, if you set `options.min` true for instance all it does it to inject `<script src="app.min.js"></script>` (including the min to its name). Is up to you to generate that minified file elsewhere.

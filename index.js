@@ -15,9 +15,9 @@ function prepare(options){
         dev         : true,
         keepComment : true,
         hash        : '',
-        jsStart     : '\n<script src="',
+        jsStart     : '<script src="',
         jsEnd       : '"></script>',
-        cssStart    : '\n<link rel="stylesheet" href="',
+        cssStart    : '<link rel="stylesheet" href="',
         cssEnd      : '">',
     };
 
@@ -33,22 +33,25 @@ function prepare(options){
 }
 
 function defineInject(dst, target, opt){
-    var inject = '';
+    var inject = [];
 
     if(dst[target]){
         for(var i = 0; i < dst[target].length; i++){
             if(opt.dev){
                 var name = dst[target][i];
+                inject.push('<!-- ' + name + ' -->');
                 for(var j = 0; j < config[target][name].length; j++){
-                    inject += opt[target+'Start'] + config[target][name][j] + opt[target+'End'];
+                    inject.push(opt[target+'Start'] + config[target][name][j] + opt[target+'End']);
                 }
             }
             else{
-                inject += opt[target+'Start'] + dst[target][i] + opt.hash;
+                var txt = opt[target+'Start'] + dst[target][i] + opt.hash;
                 if(opt.min){
-                    inject += '.min';
+                    txt += '.min';
                 }
-                inject += '.' + target + opt[target+'End'];
+                txt += '.' + target + opt[target+'End'];
+
+                inject.push(txt);
             }
         }
     }
@@ -64,9 +67,17 @@ function replaceBlock(text, block, data, opt){
 
     if(m){
         var new_text = m[1];
+
+        var indent = '\n';
+        
+        var i = new_text.length;
+        while(new_text[--i] == ' '){ indent += ' '; }
+
         if(opt.keepComment) new_text += m[2];
-        new_text += data + '\n';
-        if(opt.keepComment) new_text += m[4];
+        for(var i = 0; i < data.length; i++){
+            new_text += indent + data[i];
+        }
+        if(opt.keepComment) new_text += indent + m[4];
         new_text += m[5];
 
         return new_text;
