@@ -177,5 +177,40 @@ var concat = function(options){
     return pass;
 };
 
+var list = function(options){
+
+    var opt = prepare(options);
+
+    config.available = [];
+
+    return through.obj(function(file, enc, cb){
+
+        var filename = file.relative;
+        var found = false;
+
+        for(var name in config[opt.target]){
+            for(var i = 0; i < config[opt.target][name].length && !found; i++) {
+                if(config[opt.target][name][i] == filename){
+                    found = true;
+                }
+            }
+        }
+
+        if(!found){
+            config.available.push(filename);
+        }
+
+        cb(null, file);
+    }, function(cb){
+
+        console.log(config);
+
+        fs.writeFileSync('meleca.json', JSON.stringify(config, null, 4));
+
+        cb();
+    });
+};
+
 module.exports.inject = inject;
 module.exports.concat = concat;
+module.exports.list = list;

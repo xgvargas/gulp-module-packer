@@ -10,7 +10,7 @@ npm install --save-dev gulp-module-packer
 
 ## Usage
 
-This package will help you with 3 things:
+This plugin will help you with 3 things:
 
 - inject code into your HTML (keeping file order)
 - concatenate your files into modules (keeping file order)
@@ -190,11 +190,140 @@ And for `dev: true`:
 </html>
 ```
 
-For any HTML file not listed at `modpack.json`, `gulp-module-packer.inject()` will behave as a pass-through.
+For any HTML file not listed in `modpack.json`, `gulp-module-packer.inject()` will behave as a pass-through.
 
 ### Concatenate
 
+For every module inside `js` and `css` in your `modpack.json` this plugin will create a file with the content of every file listed for this module in the same order they are listed.
+
+Also you can consume files already in the stream to be concatenated too. Example:
+
+```json
+{
+    "inject": {
+        "index.html": {
+            "js": [
+                "base",
+                "myapp"
+            ],
+            "css": [...]
+        }
+    },
+    "js": {
+        "myapp": [
+            "app.js",
+            "::templates.js"
+            "route/routes.js",
+        ],
+        "base": [...]
+    },
+    "css": {
+        "app-css": [...]
+    }
+}
+```
+
+Here, after concatenation, the module `myapp.js` will include `app.js` file, then the content of a stream named `templates.js` and finally the `route/routes.js` file.
+
+During injection with `dev: true` the file `templates.js` will *NOT* be injected.
+
+If the `gulp-module-packer.concat()` is called with `keepConsumed: true` then the file `templates.js` will be left untouched in the stream and will be saved as real file in next `gulp.dest()`.
+
+Example:
+
+```javascript
+var packer = require('gulp-module-packer');
+
+var GIT_HASH = sh.exec('git rev-parse --short HEAD', {silent: true}).output.trim();
+
+gulp.task('release-js', function(){
+    return gulp.src('www/templates/*.html')
+        .pipe(htmlMinifier({
+            removeComments     : true,
+            collapseWhitespace : true,
+        }))
+        .pipe(angularTemplatecache({
+            filename   : 'templates.js'
+            root       : 'templates',
+            module     : 'templates',
+            standalone : false
+        }))
+        .pipe(packer.concat({
+            hash: GIT_HASH,
+        }))
+        .pipe(ngAnnotate())
+        .pipe(bytediff.start())
+        .pipe(uglify({
+            preserveComments : 'license',
+            compress : {
+                drop_console : true,
+            },
+        }))
+        .on('error', dealWithError)
+        .pipe(plugins.bytediff.stop())
+        .pipe(gulp.dest('dist/js'));
+})
+```
+
+This nice example for angular will generate a template cache for all HTML files and then use gulp-module-packer.concat() to pack it with all other .js files.
+
 ### List
+
+To keep the `modpack.json` file updated is a manual work. You should include all .js and .css files in their correct position, this is up to you to do. But, this module can help you by listing all available .js and .css in your project, so all you have to do is move them to the correct position and simply ignore the available files that should be ignored.
+
+A simple task like this will do the job:
+
+```javascript
+var packer = require('gulp-module-packer');
+
+gulp.task('available', function(){
+    return gulp.src(['www/**/*.js', 'www/**/*.css'], {read: false}).pipe(packer.list());
+})
+```
+
+and will alter your `modpack.json` to include a `available` field with all unused files available. Example:
+
+```json
+{
+    "inject": {
+        "index.html": {
+            "js": [
+                "base",
+                "app"
+            ],
+            "css": [
+                "app-css"
+            ]
+        }
+    },
+    "js": {
+        "app": [
+            "app.js",
+            "routes.js",
+        ],
+        "base": [
+            "angular.js",
+            "angular-animate.js",
+            "angular-ui-router.js"
+        ]
+    },
+    "css": {
+        "app-css": [
+            "bootstrap.css",
+            "app.css"
+        ]
+    },
+    "available": [
+        "js\\authentication.c.js",
+        "js\\config.js",
+        "lib\\angular-sanitize\\angular-sanitize.js",
+        "lib\\velocity\\velocity.js",
+        "lib\\angular-formly\\dist\\formly.js",
+        "lib\\bootstrap-material-design-icons\\css\\material-icons.css",
+        "lib\\ngToast\\dist\\ngToast.css",
+    ]
+}
+```
 
 ## API
 
