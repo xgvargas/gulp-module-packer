@@ -188,9 +188,17 @@ var list = function(options){
         var filename = file.relative;
         var found = false;
 
-        for(var name in config[opt.target]){
-            for(var i = 0; i < config[opt.target][name].length && !found; i++) {
-                if(config[opt.target][name][i] == filename){
+        for(var name in config.js){
+            for(var i = 0; i < config.js[name].length && !found; i++) {
+                if(config.js[name][i] == filename){
+                    found = true;
+                }
+            }
+        }
+
+        for(var name in config.css){
+            for(var i = 0; i < config.css[name].length && !found; i++) {
+                if(config.css[name][i] == filename){
                     found = true;
                 }
             }
