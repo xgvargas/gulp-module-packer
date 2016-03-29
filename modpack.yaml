@@ -1,0 +1,18 @@
+injection:
+    index.html:
+        js:
+            - base
+            - app
+js:
+    app:
+        - "js\\app-Z.js"
+        - js/app-A.js
+    base:
+        - lib/vendor-B.js
+        - "lib\\vendor-A.js"
+css:
+    app:
+        - "css\\app.css"
+available:
+    - "js\\app-A.js"
+    - "lib\\vendor-B.js"

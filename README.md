@@ -332,7 +332,7 @@ and will alter your `modpack.json` to include a `available` field with all unuse
 
 ## API
 
-`gulp-module-packer.concat(options)`
+#### `gulp-module-packer.concat(options)`
 
 | option         | defaut           | description                                               |
 |:---------------|:-----------------|:----------------------------------------------------------|
@@ -341,36 +341,50 @@ and will alter your `modpack.json` to include a `available` field with all unuse
 | `keepConsumed` | `false`          | Keep inside stream any file consumed during concatenation |
 | `min`          | `false`          | if true then include '.min' to concatenated filename      |
 | `hash`         | `''`             | added between filename and [.min].(js/css)                |
+|base|||
 
 Please note that if you set `options.min` true in here all it does is to include the `.min` to its name. You still have to pipe a minifier after this. (In other words: you don't have to pipe a rename just to include `.min` to your filename).
 
+#### `gulp-module-packer.inject(options)`
 
-`gulp-module-packer.inject(options)`
-
-| option        | defaut                            | description                                                  |
-|:--------------|:----------------------------------|:-------------------------------------------------------------|
-| `configFile`  | `modpack.json`                    | name of configuration file                                   |
-| `min`         | `false`                           | if true then include '.min' to injected file                 |
-| `dev`         | `true`                            | if true inject developping files instead of concatened files |
-| `keepComment` | `true`                            | keep the placeholder comment wraping the injection           |
-| `hash`        | `''`                              | added between filename and [.min].(js/css)                   |
-| `jsStart`     | `'<script src="'`                 |                                                              |
-| `jsEnd`       | `'"></script>'`                   |                                                              |
-| `cssStart`    | `'<link rel="stylesheet" href="'` |                                                              |
-| `cssEnd`      | `'">'`                            |                                                              |
+| option        | defaut                            | description                                                   |
+|:--------------|:----------------------------------|:--------------------------------------------------------------|
+| `configFile`  | `modpack.json`                    | name of configuration file                                    |
+| `min`         | `false`                           | if true then include '.min' to injected file                  |
+| `dev`         | `true`                            | if true inject developing files instead of concatenated files |
+| `keepComment` | `true`                            | keep the placeholder comment wrapping the injection           |
+| `hash`        | `''`                              | added between filename and [.min].(js/css)                    |
+| `jsStart`     | `'<script src="'`                 |                                                               |
+| `jsEnd`       | `'"></script>'`                   |                                                               |
+| `cssStart`    | `'<link rel="stylesheet" href="'` |                                                               |
+| `cssEnd`      | `'">'`                            |                                                               |
 
 Please note that this function does not handle files, all it does is to inject elements inside your HTML code. So, if you set `options.min` true for instance all it does it to inject `<script src="app.min.js"></script>` (including the min to its name). Is up to you to generate that minified file elsewhere.
 
+#### `gulp-module-packer.templates(options)`
 
-`gulp-module-packer.templates(options)`
+| option       | defaut         |description                 |
+|:-------------|:---------------|:---------------------------|
+| `configFile` | 'modpack.json' | name of configuration file |
+|standalone|||
+|wrapTemplate|||
+|wrapFuntions|||
+|keepConsumed|||
+
+#### `gulp-module-packer.list(options)`
 
 | option       | defaut         |description                 |
 |:-------------|:---------------|:---------------------------|
 | `configFile` | 'modpack.json' | name of configuration file |
 
+## Developing
 
-`gulp-module-packer.list(options)`
+If you want to change the code:
 
-| option       | defaut         |description                 |
-|:-------------|:---------------|:---------------------------|
-| `configFile` | 'modpack.json' | name of configuration file |
+```bash
+# install coffeescript
+npm install -g coffeescript
+
+# compile code with:
+coffee -cwbo lib src
+```

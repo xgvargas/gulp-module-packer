@@ -24,6 +24,10 @@
     "buffer": "^4.5.1",
     "fs": "0.0.2",
     "gulp-util": "^3.0.7",
+    "js-yaml": "^3.5.5",
     "through2": "^2.0.1"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1"
   }
 }

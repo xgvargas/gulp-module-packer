@@ -1,0 +1,12 @@
+{
+    "injection": {},
+    "js": {},
+    "css": {},
+    "available": [
+        "js\\app-A.js",
+        "js\\app-Z.js",
+        "lib\\vendor-A.js",
+        "lib\\vendor-B.js",
+        "css\\app.css"
+    ]
+}

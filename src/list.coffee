@@ -11,22 +11,18 @@ module.exports.list = (options) ->
 
         found = no
 
-        for pack in config.js
-            for name in pack
-                if name == file.relative
-                    found = yes
-
-        for pack in config.css
-            for name in pack
-                if name == file.relative
-                    found = yes
+        for block in ['js', 'css']
+            for pack of config[block]
+                for name in config[block][pack]
+                    if name == file.relative
+                        found = yes
 
         config.available.push file.relative unless found
 
         cb null, file
 
     past = (cb) ->
-        fs.writeFileSync opt.configFile, JSON.stringify(config, null, 4)
+        common.saveConfig opt.configFile, config
         cb()
 
     through.obj(transform, past)
