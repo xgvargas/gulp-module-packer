@@ -1,7 +1,9 @@
-injection:
+inject:
     index.html:
         js:
             - base
+            - app
+        css:
             - app
 js:
     app:

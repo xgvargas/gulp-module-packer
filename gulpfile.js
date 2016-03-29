@@ -13,9 +13,19 @@ gulp.task('list-json', function(){
         }));
 });
 
-gulp.task('inject', function(){
+gulp.task('inject1', function(){
     return gulp.src('www/**/*.html')
-        .pipe(packer.inject({}))
+        .pipe(packer.inject({
+            dev: false,
+            hash: '.12345'
+        }))
+        .pipe(gulp.dest('dist'));
+});
+
+gulp.task('inject2', function(){
+    return gulp.src('www/**/*.html')
+        .pipe(packer.inject({
+        }))
         .pipe(gulp.dest('dist'));
 });
 
