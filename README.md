@@ -10,10 +10,11 @@ npm install --save-dev gulp-module-packer
 
 ## Usage
 
-This plugin will help you with 3 things:
+This plugin will help you with 4 things:
 
 - inject code into your HTML (keeping file order)
 - concatenate your files into modules (keeping file order)
+- pack your HTML templates
 - list all available js/css to your project
 
 ### Inject
@@ -267,6 +268,10 @@ gulp.task('release-js', function(){
 
 This nice example for angular will generate a template cache for all HTML files and then use gulp-module-packer.concat() to pack it with all other .js files.
 
+### Templates
+
+I know there already more then one template packer for angular around. But this one allows for multiples! :smile:
+
 ### List
 
 To keep the `modpack.json` file updated is a manual work. You should include all .js and .css files in their correct position, this is up to you to do. But, this module can help you by listing all available .js and .css in your project, so all you have to do is move them to the correct position and simply ignore the available files that should be ignored.
@@ -327,36 +332,63 @@ and will alter your `modpack.json` to include a `available` field with all unuse
 
 ## API
 
-`gulp-module-packer.concat(options)`
+#### `gulp-module-packer.concat(options)`
 
 | option         | defaut           | description                                               |
 |:---------------|:-----------------|:----------------------------------------------------------|
 | `configFile`   | `'modpack.json'` | name of configuration file                                |
-| `target`       |                  | `'css'` or `'js'`                                         |
+| `block`       |                  | `'css'` or `'js'`                                         |
 | `keepConsumed` | `false`          | Keep inside stream any file consumed during concatenation |
 | `min`          | `false`          | if true then include '.min' to concatenated filename      |
 | `hash`         | `''`             | added between filename and [.min].(js/css)                |
+|base|||
 
 Please note that if you set `options.min` true in here all it does is to include the `.min` to its name. You still have to pipe a minifier after this. (In other words: you don't have to pipe a rename just to include `.min` to your filename).
 
-`gulp-module-packer.inject(option)`
+#### `gulp-module-packer.inject(options)`
 
-| option        | defaut                            | description                                                  |
-|:--------------|:----------------------------------|:-------------------------------------------------------------|
-| `configFile`  | `modpack.json`                    | name of configuration file                                   |
-| `min`         | `false`                           | if true then include '.min' to injected file                 |
-| `dev`         | `true`                            | if true inject developping files instead of concatened files |
-| `keepComment` | `true`                            | keep the placeholder comment wraping the injection           |
-| `hash`        | `''`                              | added between filename and [.min].(js/css)                   |
-| `jsStart`     | `'<script src="'`                 |                                                              |
-| `jsEnd`       | `'"></script>'`                   |                                                              |
-| `cssStart`    | `'<link rel="stylesheet" href="'` |                                                              |
-| `cssEnd`      | `'">'`                            |                                                              |
+| option        | defaut                            | description                                                   |
+|:--------------|:----------------------------------|:--------------------------------------------------------------|
+| `configFile`  | `modpack.json`                    | name of configuration file                                    |
+| `min`         | `false`                           | if true then include '.min' to injected file                  |
+| `dev`         | `true`                            | if true inject developing files instead of concatenated files |
+| `keepComment` | `true`                            | keep the placeholder comment wrapping the injection           |
+| `hash`        | `''`                              | added between filename and [.min].(js/css)                    |
+| `jsStart`     | `'<script src="'`                 |                                                               |
+| `jsEnd`       | `'"></script>'`                   |                                                               |
+| `cssStart`    | `'<link rel="stylesheet" href="'` |                                                               |
+| `cssEnd`      | `'">'`                            |                                                               |
+|keepUninjected|||
 
 Please note that this function does not handle files, all it does is to inject elements inside your HTML code. So, if you set `options.min` true for instance all it does it to inject `<script src="app.min.js"></script>` (including the min to its name). Is up to you to generate that minified file elsewhere.
 
-`gulp-module-packer.list()`
+#### `gulp-module-packer.templates(options)`
 
 | option       | defaut         |description                 |
 |:-------------|:---------------|:---------------------------|
 | `configFile` | 'modpack.json' | name of configuration file |
+|standalone|||
+|wrapTemplate|||
+|wrapFuntions|||
+|keepConsumed|||
+|minify|||
+|keepUnpacked|||
+|wrapOpt|||
+
+#### `gulp-module-packer.list(options)`
+
+| option       | defaut         |description                 |
+|:-------------|:---------------|:---------------------------|
+| `configFile` | 'modpack.json' | name of configuration file |
+
+## Developing
+
+If you want to change the code:
+
+```bash
+# install coffeescript
+npm install -g coffeescript
+
+# compile code with:
+coffee -cwbo lib src
+```
