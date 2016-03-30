@@ -9,48 +9,46 @@ module.exports.concat = (options) ->
 
     [opt, config] = common.prepare options
 
-    throw new PluginError 'gulp-module-packer', 'Missing target in configuration.'  if typeof opt.target != 'string'
-
-    if opt.target != 'js' and opt.target != 'css'
-        throw new PluginError 'gulp-module-packer', 'Invalid target.'
+    throw new PluginError 'gulp-module-packer', 'Missing `block` in options.'  if typeof opt.block != 'string'
+    throw new PluginError 'gulp-module-packer', 'Invalid block.' if opt.block != 'js' and opt.block != 'css'
 
     waitFor = {}
 
-    for pack in config[opt.target]
-        for name in pack
+    for pack of config[opt.block]
+        for name in config[opt.block][pack]
             if name[0] == ':' and name[1] == ':'
                 waitFor[name] = null
 
     transform = (file, env, cb) ->
         name = '::' + file.relative
 
-        if name in waitFor
+        if name of waitFor
             waitFor[name] = file.contents
             return cb() if not opt.keepConsumed
 
         cb(null, file)
 
-    stream = through.obj(transform, past)
+    past = (cb) ->
 
-    pass = (cb) ->
-
-        for pack in config[opt.target]
+        for pack of config[opt.block]
 
             content = ''
 
-            for file in pack
+            for file in config[opt.block][pack]
                 if file[0] == ':' and file[1] == ':'
                     content += waitFor[file] + '\n'
                 else
-                    content += fs.readFileSync(file) + "\n"
+                    content += fs.readFileSync(opt.base + file) + "\n"
+
+            min = if opt.min then '.min' else ''
 
             new_file = new gutil.File
                 cwd      : ""
                 base     : ""
-                path     : pack + '.' + opt.target
+                path     : "#{pack}#{opt.hash}#{min}.#{opt.block}"
                 contents : new Buffer content
 
             stream.write new_file
         cb()
 
-    stream
+    stream = through.obj(transform, past)

@@ -32,7 +32,9 @@ gulp.task('inject2', function(){
 gulp.task('concat', function(){
     return gulp.src('')
         .pipe(packer.concat({
-            target: 'js'
+            block: 'js',
+            hash: '.123123',
+            min: 'true'
         }))
         .pipe(gulp.dest('dist'));
 });
@@ -47,7 +49,7 @@ gulp.task('concat2', function(){
     return gulp.src('www/**/*.html')
         .pipe(packer.template({}))
         .pipe(packer.concat({
-            target: 'js'
+            block: 'js'
         }))
         .pipe(gulp.dest('dist'));
 });

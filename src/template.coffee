@@ -1,22 +1,21 @@
-through     = require 'through2'
-fs          = require 'fs'
-buffer      = require('buffer').Buffer
-gutil       = require 'gulp-util'
-common      = require './common.js'
-PluginError = gutil.PluginError
+through        = require 'through2'
+buffer         = require('buffer').Buffer
+gutil          = require 'gulp-util'
+common         = require './common.js'
+path           = require 'path'
+jsStringEscape = require 'js-string-escape'
 
 module.exports.template = (options) ->
 
     [opt, config] = common.prepare options
 
     opt.wrapTemplate ?= (name, content) ->
-        "$templateCache.put('#{name}', '#{content}');"
+        "$templateCache.put('#{name}', '#{jsStringEscape(content)}');"
 
     opt.wrapFuntions ?= (name, content, standalone) ->
         alone = if standalone then ', []' else ''
         """
-        angular.module('#{name}'#{alone}).run(["$templateCache", function($templateCache) {
-            #{content}
+        angular.module('#{name}'#{alone}).run(["$templateCache", function($templateCache) { #{content}
         }]);'
         """
 
@@ -24,18 +23,24 @@ module.exports.template = (options) ->
 
     transform = (file, env, cb) ->
 
-        console.log file.relative
+        pack = path.dirname file.relative
 
-        pack = 'aa'
-
-        templates[pack] ?= []
-
-        templates[pack].push opt.wrapTemplate file.relative, file.contents
+        if pack != '.'
+            templates[pack] ?= ''
+            templates[pack] += '\n    ' + opt.wrapTemplate file.relative, file.contents
+            return cb() if not opt.keepConsumed
 
         cb null, file
 
-    pass = (cb) ->
-        console.log templates
+    past = (cb) ->
+        for pack of templates
+            new_file = new gutil.File
+                cwd      : ""
+                base     : ""
+                path     : "#{pack}.js"
+                contents : new Buffer opt.wrapFuntions pack, templates[pack], opt.standalone
+
+            stream.write new_file
         cb()
 
-    through.obj(transform, pass)
+    stream = through.obj(transform, past)

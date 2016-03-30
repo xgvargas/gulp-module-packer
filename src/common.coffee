@@ -9,7 +9,7 @@ PluginError = gutil.PluginError
 module.exports.prepare = (options) ->
     opt =
         configFile   : 'modpack.yaml'
-        base         : 'www'
+        base         : 'www/'
         min          : no
         dev          : yes
         keepComment  : yes
@@ -44,3 +44,6 @@ module.exports.saveConfig = (file, data) ->
 
     if file.slice(-5) == '.json'
         fs.writeFileSync file, JSON.stringify(data, null, 4)
+
+module.exports.fixPath = (path) ->
+    path

@@ -337,7 +337,7 @@ and will alter your `modpack.json` to include a `available` field with all unuse
 | option         | defaut           | description                                               |
 |:---------------|:-----------------|:----------------------------------------------------------|
 | `configFile`   | `'modpack.json'` | name of configuration file                                |
-| `target`       |                  | `'css'` or `'js'`                                         |
+| `block`       |                  | `'css'` or `'js'`                                         |
 | `keepConsumed` | `false`          | Keep inside stream any file consumed during concatenation |
 | `min`          | `false`          | if true then include '.min' to concatenated filename      |
 | `hash`         | `''`             | added between filename and [.min].(js/css)                |
