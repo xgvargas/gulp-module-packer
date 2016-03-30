@@ -1,6 +1,5 @@
 through     = require 'through2'
 fs          = require 'fs'
-buffer      = require('buffer').Buffer
 gutil       = require 'gulp-util'
 common      = require './common.js'
 PluginError = gutil.PluginError
@@ -86,7 +85,9 @@ module.exports.inject = (options) ->
             content = replaceBlock content, 'js', defineInjection filename, 'js'
 
             file.contents = new Buffer content
-
+        else
+            return cb() unless opt.keepUninjected
+            
         cb null, file
 
     through.obj(transform)

@@ -1,25 +1,27 @@
 through        = require 'through2'
-buffer         = require('buffer').Buffer
 gutil          = require 'gulp-util'
 common         = require './common.js'
 path           = require 'path'
 jsStringEscape = require 'js-string-escape'
-minify         = require('html-minifier').minify
-# miniHTML       = require "mini-html"
-# htmlminify     = require 'html-minify'
 
 module.exports.template = (options) ->
 
     [opt, config] = common.prepare options
 
-    opt.wrapTemplate ?= (name, content) ->
-        "$templateCache.put('#{name}', '#{content}');"
+    opt.wrapTemplate ?= (name, content, opt) ->
+        if opt.minify
+            content = content.replace /(?:<!--[\s\S]*?-->)|(?:\s*[\n\r]+\s*)/g, ''
+            content = content.replace /\s{2,}/g, ' '
+            content = content.replace /\s>/g, '>'
+            content = content.replace /<\s/g, '<'
 
-    opt.wrapFuntions ?= (name, content, standalone) ->
-        alone = if standalone then ', []' else ''
+        "$templateCache.put('#{name}', '#{jsStringEscape content}');"
+
+    opt.wrapFuntions ?= (name, content, opt) ->
+        alone = if opt.standalone then ', []' else ''
         """
         angular.module('#{name}'#{alone}).run(["$templateCache", function($templateCache) { #{content}
-        }]);'
+        }]);
         """
 
     templates = {}
@@ -30,8 +32,7 @@ module.exports.template = (options) ->
 
         if pack != '.'
             templates[pack] ?= ''
-            content = jsStringEscape if opt.minify then minify file.contents, opt.minifyOpt else file.contents
-            templates[pack] += '\n    ' + opt.wrapTemplate filename, content
+            templates[pack] += '\n    ' + opt.wrapTemplate filename, file.contents.toString(), opt.wrapOpt
             return cb() unless opt.keepConsumed
         else
             return cb() unless opt.keepUnpacked
@@ -40,11 +41,12 @@ module.exports.template = (options) ->
 
     past = (cb) ->
         for pack of templates
+            console.log opt.wrapFuntions pack, templates[pack], opt.wrapOpt
             new_file = new gutil.File
                 cwd      : ""
                 base     : ""
                 path     : "#{pack}.js"
-                contents : new Buffer opt.wrapFuntions pack, templates[pack], opt.standalone
+                contents : new Buffer opt.wrapFuntions pack, templates[pack], opt.wrapOpt
 
             stream.write new_file
         cb()

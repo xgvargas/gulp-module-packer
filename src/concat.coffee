@@ -1,6 +1,5 @@
 through     = require 'through2'
 fs          = require 'fs'
-buffer      = require('buffer').Buffer
 gutil       = require 'gulp-util'
 common      = require './common.js'
 PluginError = gutil.PluginError
@@ -17,7 +16,7 @@ module.exports.concat = (options) ->
     for pack of config[opt.block]
         for name in config[opt.block][pack]
             if name[0] == ':' and name[1] == ':'
-                waitFor[name] = null
+                waitFor[name] = "/* === Oops! Can't find `#{name}` in stream... === */"
 
     transform = (file, env, cb) ->
         name = '::' + file.relative.replace '\\', '/'

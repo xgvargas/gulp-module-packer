@@ -1,7 +1,7 @@
 inject:
     index.html:
         js:
-            - base
+            - vendor/base
             - app
         css:
             - app
@@ -10,7 +10,7 @@ js:
         - js/app-Z.js
         - js/app-A.js
         - '::template1'
-    base:
+    vendor/base:
         - lib/vendor-B.js
         - lib/vendor-A.js
 css:

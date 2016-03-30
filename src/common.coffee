@@ -6,37 +6,40 @@ PluginError = gutil.PluginError
 # String::startsWith ?= (s) -> @slice(0, s.length) == s
 # String::endsWith   ?= (s) -> s == '' or @slice(-s.length) == s
 
+fileExists = (path) ->
+    try
+        return fs.statSync(path).isFile()
+    catch error
+        return false
+
 module.exports.prepare = (options) ->
     opt =
-        configFile   : 'modpack.yaml'
-        base         : 'www/'
-        min          : no
-        dev          : yes
-        keepComment  : yes
-        keepConsumed : no
-        hash         : ''
-        jsStart      : '<script src="'
-        jsEnd        : '"></script>'
-        cssStart     : '<link rel="stylesheet" href="'
-        cssEnd       : '">'
-        standalone   : no
-        minify       : yes
-        keepUnpacked : no
-        minifyOpt    :
-            removeComments       : yes
-            collapseWhitespace   : yes
-            conservativeCollapse : yes
-            preserveLineBreaks   : no
+        configFile     : null
+        base           : 'www/'
+        min            : no
+        dev            : yes
+        keepComment    : yes
+        keepConsumed   : no
+        hash           : ''
+        jsStart        : '<script src="'
+        jsEnd          : '"></script>'
+        cssStart       : '<link rel="stylesheet" href="'
+        cssEnd         : '">'
+        keepUninjected : yes
+        keepUnpacked   : no
+        wrapOpt        : 
+            standalone : no
+            minify     : yes
 
     if options?
         for attr, val of options
             opt[attr] = val
 
-    if opt.configFile.slice(-5) == '.yaml'
-        config = yaml.safeLoad fs.readFileSync opt.configFile
+    opt.configFile = 'modpack.yaml' if fileExists 'modpack.yaml' unless opt.configFile?
+    opt.configFile = 'modpack.json' if fileExists 'modpack.json' unless opt.configFile?
 
-    if opt.configFile.slice(-5) == '.json'
-        config = JSON.parse fs.readFileSync opt.configFile
+    config = yaml.safeLoad fs.readFileSync opt.configFile if opt.configFile.slice(-5) == '.yaml'
+    config = JSON.parse fs.readFileSync opt.configFile if opt.configFile.slice(-5) == '.json'
 
     if not config?
         throw new PluginError 'gulp-module-packer', 'Invalid config file.'

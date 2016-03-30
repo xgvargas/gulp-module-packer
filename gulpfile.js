@@ -60,7 +60,13 @@ gulp.task('concat', function(){
 
 gulp.task('template', function(){
     return gulp.src('www/**/*.html')
-        .pipe(packer.template({}))
+        .pipe(packer.template({
+            wrapOpt:{
+                standalone: true,
+                minify:true,
+            },
+            keepUnpacked: true,
+        }))
         .pipe(gulp.dest('dist'));
 });
 

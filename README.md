@@ -358,6 +358,7 @@ Please note that if you set `options.min` true in here all it does is to include
 | `jsEnd`       | `'"></script>'`                   |                                                               |
 | `cssStart`    | `'<link rel="stylesheet" href="'` |                                                               |
 | `cssEnd`      | `'">'`                            |                                                               |
+|keepUninjected|||
 
 Please note that this function does not handle files, all it does is to inject elements inside your HTML code. So, if you set `options.min` true for instance all it does it to inject `<script src="app.min.js"></script>` (including the min to its name). Is up to you to generate that minified file elsewhere.
 
@@ -372,6 +373,7 @@ Please note that this function does not handle files, all it does is to inject e
 |keepConsumed|||
 |minify|||
 |keepUnpacked|||
+|wrapOpt|||
 
 #### `gulp-module-packer.list(options)`
 
