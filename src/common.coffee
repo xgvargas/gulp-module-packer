@@ -20,6 +20,13 @@ module.exports.prepare = (options) ->
         cssStart     : '<link rel="stylesheet" href="'
         cssEnd       : '">'
         standalone   : no
+        minify       : yes
+        keepUnpacked : no
+        minifyOpt    :
+            removeComments       : yes
+            collapseWhitespace   : yes
+            conservativeCollapse : yes
+            preserveLineBreaks   : no
 
     if options?
         for attr, val of options
@@ -44,6 +51,3 @@ module.exports.saveConfig = (file, data) ->
 
     if file.slice(-5) == '.json'
         fs.writeFileSync file, JSON.stringify(data, null, 4)
-
-module.exports.fixPath = (path) ->
-    path

@@ -4,13 +4,16 @@ gutil          = require 'gulp-util'
 common         = require './common.js'
 path           = require 'path'
 jsStringEscape = require 'js-string-escape'
+minify         = require('html-minifier').minify
+# miniHTML       = require "mini-html"
+# htmlminify     = require 'html-minify'
 
 module.exports.template = (options) ->
 
     [opt, config] = common.prepare options
 
     opt.wrapTemplate ?= (name, content) ->
-        "$templateCache.put('#{name}', '#{jsStringEscape(content)}');"
+        "$templateCache.put('#{name}', '#{content}');"
 
     opt.wrapFuntions ?= (name, content, standalone) ->
         alone = if standalone then ', []' else ''
@@ -22,13 +25,16 @@ module.exports.template = (options) ->
     templates = {}
 
     transform = (file, env, cb) ->
-
-        pack = path.dirname file.relative
+        filename = file.relative.replace '\\', '/'
+        pack = path.dirname filename
 
         if pack != '.'
             templates[pack] ?= ''
-            templates[pack] += '\n    ' + opt.wrapTemplate file.relative, file.contents
-            return cb() if not opt.keepConsumed
+            content = jsStringEscape if opt.minify then minify file.contents, opt.minifyOpt else file.contents
+            templates[pack] += '\n    ' + opt.wrapTemplate filename, content
+            return cb() unless opt.keepConsumed
+        else
+            return cb() unless opt.keepUnpacked
 
         cb null, file
 

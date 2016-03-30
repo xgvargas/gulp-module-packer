@@ -79,9 +79,11 @@ module.exports.inject = (options) ->
             @emit 'error', new PluginError 'gulp-module-packer', 'Streaming not supported.'
             return cb()
 
-        if config.inject[file.relative]?
-            content = replaceBlock file.contents, 'css', defineInjection file.relative, 'css'
-            content = replaceBlock content, 'js', defineInjection file.relative, 'js'
+        filename = file.relative.replace '\\', '/'
+
+        if config.inject[filename]?
+            content = replaceBlock file.contents, 'css', defineInjection filename, 'css'
+            content = replaceBlock content, 'js', defineInjection filename, 'js'
 
             file.contents = new Buffer content
 

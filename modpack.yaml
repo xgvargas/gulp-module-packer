@@ -7,14 +7,13 @@ inject:
             - app
 js:
     app:
-        - "js\\app-Z.js"
-        - "js\\app-A.js"
-        - "::template1"
+        - js/app-Z.js
+        - js/app-A.js
+        - '::template1'
     base:
         - lib/vendor-B.js
-        - "lib\\vendor-A.js"
+        - lib/vendor-A.js
 css:
     app:
-        - "css\\app.css"
-available:
-    - "lib\\vendor-B.js"
+        - css/app.css
+available: []

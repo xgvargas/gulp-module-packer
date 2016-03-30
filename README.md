@@ -370,6 +370,8 @@ Please note that this function does not handle files, all it does is to inject e
 |wrapTemplate|||
 |wrapFuntions|||
 |keepConsumed|||
+|minify|||
+|keepUnpacked|||
 
 #### `gulp-module-packer.list(options)`
 

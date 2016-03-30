@@ -20,7 +20,7 @@ module.exports.concat = (options) ->
                 waitFor[name] = null
 
     transform = (file, env, cb) ->
-        name = '::' + file.relative
+        name = '::' + file.relative.replace '\\', '/'
 
         if name of waitFor
             waitFor[name] = file.contents
