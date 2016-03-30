@@ -65,7 +65,7 @@ gulp.task('template', function(){
                 standalone: true,
                 minify:true,
             },
-            keepUnpacked: true,
+            keepUnpacked: false,
         }))
         .pipe(gulp.dest('dist'));
 });

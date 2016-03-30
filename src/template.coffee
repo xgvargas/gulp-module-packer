@@ -27,6 +27,10 @@ module.exports.template = (options) ->
     templates = {}
 
     transform = (file, env, cb) ->
+        if file.isStream()
+            @emit 'error', new PluginError 'gulp-module-packer', 'Streaming not supported.'
+            return cb()
+
         filename = file.relative.replace '\\', '/'
         pack = path.dirname filename
 
@@ -48,7 +52,7 @@ module.exports.template = (options) ->
                 path     : "#{pack}.js"
                 contents : new Buffer opt.wrapFuntions pack, templates[pack], opt.wrapOpt
 
-            stream.write new_file
+            @push new_file
         cb()
 
-    stream = through.obj(transform, past)
+    through.obj transform, past

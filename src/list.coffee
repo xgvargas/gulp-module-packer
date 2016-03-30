@@ -25,4 +25,4 @@ module.exports.list = (options) ->
         common.saveConfig opt.configFile, config
         cb()
 
-    through.obj(transform, past)
+    through.obj transform, past

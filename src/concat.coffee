@@ -19,6 +19,10 @@ module.exports.concat = (options) ->
                 waitFor[name] = "/* === Oops! Can't find `#{name}` in stream... === */"
 
     transform = (file, env, cb) ->
+        if file.isStream()
+            @emit 'error', new PluginError 'gulp-module-packer', 'Streaming not supported.'
+            return cb()
+
         name = '::' + file.relative.replace '\\', '/'
 
         if name of waitFor
@@ -47,7 +51,7 @@ module.exports.concat = (options) ->
                 path     : "#{pack}#{opt.hash}#{min}.#{opt.block}"
                 contents : new Buffer content
 
-            stream.write new_file
+            @push new_file
         cb()
 
-    stream = through.obj(transform, past)
+    through.obj transform, past

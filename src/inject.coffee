@@ -87,7 +87,7 @@ module.exports.inject = (options) ->
             file.contents = new Buffer content
         else
             return cb() unless opt.keepUninjected
-            
+
         cb null, file
 
-    through.obj(transform)
+    through.obj transform
