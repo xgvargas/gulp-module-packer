@@ -49,12 +49,12 @@ gulp.task('inject4', function(){
 });
 
 gulp.task('concat', function(){
-    return gulp.src('')
-        .pipe(packer.concat({
+    return packer.concat({
             block: 'js',
             hash: '.123123',
-            min: 'true'
-        }))
+            min: 'true',
+            mode: 'src',
+        })
         .pipe(gulp.dest('dist'));
 });
 

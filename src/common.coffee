@@ -19,6 +19,8 @@ module.exports.prepare = (options) ->
         min            : no
         dev            : yes
         keepComment    : yes
+        header         : ''
+        mode           : 'pipe'
         keepConsumed   : no
         hash           : ''
         jsStart        : '<script src="'

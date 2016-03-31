@@ -31,7 +31,7 @@ module.exports.template = (options) ->
             @emit 'error', new PluginError 'gulp-module-packer', 'Streaming not supported.'
             return cb()
 
-        filename = file.relative.replace '\\', '/'
+        filename = file.relative.replace /\\/g, '/'
         pack = path.dirname filename
 
         if pack != '.'
@@ -45,7 +45,6 @@ module.exports.template = (options) ->
 
     past = (cb) ->
         for pack of templates
-            console.log opt.wrapFuntions pack, templates[pack], opt.wrapOpt
             new_file = new gutil.File
                 cwd      : ""
                 base     : ""

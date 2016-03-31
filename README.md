@@ -342,6 +342,8 @@ and will alter your `modpack.json` to include a `available` field with all unuse
 | `min`          | `false`          | if true then include '.min' to concatenated filename      |
 | `hash`         | `''`             | added between filename and [.min].(js/css)                |
 |base|||
+|header|||
+|mode|||
 
 Please note that if you set `options.min` true in here all it does is to include the `.min` to its name. You still have to pipe a minifier after this. (In other words: you don't have to pipe a rename just to include `.min` to your filename).
 
