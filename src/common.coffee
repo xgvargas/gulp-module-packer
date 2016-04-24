@@ -29,8 +29,8 @@ module.exports.prepare = (options) ->
         cssEnd         : '">'
         keepUninjected : yes
         keepUnpacked   : no
-        wrapOpt        : 
-            standalone : no
+        wrapOpt        :
+            standalone : yes
             minify     : yes
 
     if options?
