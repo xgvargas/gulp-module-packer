@@ -1,6 +1,6 @@
 {
   "name": "gulp-module-packer",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "A module generator for gulp.",
   "main": "index.js",
   "scripts": {
