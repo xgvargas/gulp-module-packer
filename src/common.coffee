@@ -1,7 +1,6 @@
-fs          = require 'fs'
-yaml        = require 'js-yaml'
-gutil       = require 'gulp-util'
-PluginError = gutil.PluginError
+fs            = require 'fs'
+yaml          = require 'js-yaml'
+{PluginError} = require 'gulp-util'
 
 # String::startsWith ?= (s) -> @slice(0, s.length) == s
 # String::endsWith   ?= (s) -> s == '' or @slice(-s.length) == s
@@ -34,25 +33,33 @@ module.exports.prepare = (options) ->
             minify     : yes
 
     if options?
-        for attr, val of options
-            opt[attr] = val
+        opt[k] = val for k, val of options
 
-    opt.configFile = 'modpack.yaml' if fileExists 'modpack.yaml' unless opt.configFile?
-    opt.configFile = 'modpack.json' if fileExists 'modpack.json' unless opt.configFile?
+    opt.configFile ?= 'modpack.yaml' if fileExists 'modpack.yaml'
+    opt.configFile ?= 'modpack.json' if fileExists 'modpack.json'
 
-    config = yaml.safeLoad fs.readFileSync opt.configFile if opt.configFile.slice(-5) == '.yaml'
-    config = JSON.parse fs.readFileSync opt.configFile if opt.configFile.slice(-5) == '.json'
+    config = yaml.safeLoad fs.readFileSync opt.configFile if opt.configFile[-5..] == '.yaml'
+    config = JSON.parse fs.readFileSync opt.configFile if opt.configFile[-5..] == '.json'
 
-    if not config?
+    unless config?
         throw new PluginError 'gulp-module-packer', 'Invalid config file.'
 
     [opt, config]
 
 module.exports.saveConfig = (file, data) ->
-    if file.slice(-5) == '.yaml'
+    if file[-5..] == '.yaml'
         fs.writeFileSync file, yaml.safeDump data,
             indent : 4
             noRefs : true
 
-    if file.slice(-5) == '.json'
-        fs.writeFileSync file, JSON.stringify(data, null, 4)
+    if file[-5..] == '.json'
+        fs.writeFileSync file, JSON.stringify data, null, 4
+
+
+module.exports.getConfig = (name) ->
+    [opt, cfg] = module.exports.prepare()
+
+    for n in name.split '.'
+        cfg = if cfg?[n]? then cfg[n] else null
+
+    cfg
