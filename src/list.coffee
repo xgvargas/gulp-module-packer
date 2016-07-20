@@ -10,7 +10,7 @@ module.exports.list = (options) ->
 
     transform = (file, enc, cb) ->
         found = no
-        filename = relative opt.base, file.relative.replace /\\/g, '/'
+        filename = relative(opt.base, file.relative).replace /\\/g, '/'
 
         for block in ['js', 'css']
             for pack of config[block]
