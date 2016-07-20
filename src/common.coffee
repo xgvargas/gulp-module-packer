@@ -49,8 +49,10 @@ module.exports.prepare = (options) ->
 module.exports.saveConfig = (file, data) ->
     if file[-5..] == '.yaml'
         fs.writeFileSync file, yaml.safeDump data,
-            indent : 4
-            noRefs : true
+            indent    : 4
+            noRefs    : true
+            lineWidth : 150
+            flowLevel : 3
 
     if file[-5..] == '.json'
         fs.writeFileSync file, JSON.stringify data, null, 4
